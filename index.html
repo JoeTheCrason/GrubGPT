@@ -84,10 +84,12 @@ a{text-decoration:none;color:inherit}
 .hdr-help:hover{background:var(--hover)}
 
 /* ══ THREAD ══ */
-.thread{flex:1;overflow-y:auto;overflow-x:hidden;scroll-behavior:smooth;display:flex;flex-direction:column}
+.thread{flex:1;overflow-y:auto;overflow-x:hidden;scroll-behavior:smooth;height:0}
 .thread::-webkit-scrollbar{width:5px}
 .thread::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:3px}
-.thread-inner{max-width:42rem;margin:0 auto;padding:0 16px;min-height:100%;display:flex;flex-direction:column}
+.thread-inner{max-width:42rem;margin:0 auto;padding:0 16px}
+.thread-inner.splash-mode{height:100%}
+.thread-inner.chat-mode{padding-top:24px;padding-bottom:40px}
 
 /* Splash */
 .splash{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100%;padding:24px 0}
@@ -295,7 +297,7 @@ a{text-decoration:none;color:inherit}
 
   <!-- Thread scroll -->
   <div class="thread" id="thread">
-    <div class="thread-inner">
+    <div class="thread-inner splash-mode" id="threadInner">
 
       <!-- SPLASH -->
       <div class="splash" id="splash">
@@ -478,6 +480,9 @@ function showThread(){
   document.getElementById('splash').style.display='none';
   document.getElementById('splashFooter').style.display='none';
   document.getElementById('bottomComp').style.display='';
+  const ti=document.getElementById('threadInner');
+  ti.classList.remove('splash-mode');
+  ti.classList.add('chat-mode');
   document.getElementById('bcTA').focus();
 }
 
@@ -565,6 +570,9 @@ function newChat(){
   document.getElementById('splashTA').style.height='auto';
   document.getElementById('splashSend').classList.remove('visible');
   document.getElementById('splashVoice').style.display='';
+  const ti=document.getElementById('threadInner');
+  ti.classList.remove('chat-mode');
+  ti.classList.add('splash-mode');
 }
 </script>
 </body>
