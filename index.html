@@ -5,425 +5,498 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ChatGPT</title>
 <style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-:root {
-  --bg-primary: #212121;
-  --bg-elevated: #2f2f2f;
-  --bg-elevated2: #3a3a3a;
-  --sidebar-bg: #171717;
-  --sidebar-width: 260px;
-  --header-height: 52px;
-  --text-primary: #ececec;
-  --text-secondary: #b4b4b4;
-  --text-tertiary: #8e8ea0;
-  --border: rgba(255,255,255,0.1);
-  --hover: rgba(255,255,255,0.06);
-  --active: rgba(255,255,255,0.1);
-  --composer-radius: 28px;
-  --green: #10a37f;
-  --font: ui-sans-serif,-apple-system,system-ui,"Segoe UI",Helvetica,Arial,sans-serif;
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#212121;
+  --sb:#171717;
+  --elevated:#2f2f2f;
+  --elevated2:#3a3a3a;
+  --border:rgba(255,255,255,0.1);
+  --hover:rgba(255,255,255,0.06);
+  --active:rgba(255,255,255,0.1);
+  --t1:#ececec;
+  --t2:#b4b4b4;
+  --t3:#8e8ea0;
+  --green:#10a37f;
+  --sb-w:259px;
+  --hh:48px;
+  --font:ui-sans-serif,-apple-system,system-ui,"Segoe UI",Helvetica,Arial,sans-serif;
 }
-
 html,body{height:100%}
-body{font-family:var(--font);background:var(--bg-primary);color:var(--text-primary);display:flex;overflow:hidden;font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+body{font-family:var(--font);background:var(--bg);color:var(--t1);display:flex;overflow:hidden;font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
 svg{display:block}
-a{text-decoration:none}
-button{cursor:pointer;font-family:var(--font)}
+button{cursor:pointer;font-family:var(--font);border:none;background:none}
+a{text-decoration:none;color:inherit}
 
-/* ── SIDEBAR ── */
-.sidebar{width:var(--sidebar-width);background:var(--sidebar-bg);display:flex;flex-direction:column;height:100vh;flex-shrink:0;border-right:1px solid var(--border)}
+/* ══ SIDEBAR ══ */
+.sb{width:var(--sb-w);background:var(--sb);display:flex;flex-direction:column;height:100vh;flex-shrink:0}
 
-.sb-header{height:var(--header-height);display:flex;align-items:center;justify-content:space-between;padding:0 8px;flex-shrink:0}
+.sb-top{height:var(--hh);display:flex;align-items:center;justify-content:space-between;padding:0 8px;flex-shrink:0}
 
-.logo-btn{display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:8px;color:var(--text-primary);border:none;background:none;transition:background .15s}
-.logo-btn:hover{background:var(--hover)}
+.sb-logo{display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:8px;color:var(--t1);border:none;background:none;padding:0;transition:background .15s}
+.sb-logo:hover{background:var(--hover)}
 
-.icon-btn{display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:8px;border:none;background:none;color:var(--text-tertiary);transition:background .15s,color .15s}
-.icon-btn:hover{background:var(--hover);color:var(--text-primary)}
+.ib{display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:8px;color:var(--t3);transition:background .15s,color .15s}
+.ib:hover{background:var(--hover);color:var(--t1)}
 
-.sb-nav{padding:4px 8px;display:flex;flex-direction:column;gap:1px;flex-shrink:0}
+/* Nav items */
+.sb-nav{padding:4px 6px;display:flex;flex-direction:column;gap:1px;flex-shrink:0}
 
-.menu-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;color:var(--text-primary);font-size:14px;transition:background .15s;border:none;background:none;width:100%;text-align:left;min-height:36px}
-.menu-item:hover{background:var(--hover)}
+.nav-item{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:8px;color:var(--t1);font-size:13.5px;transition:background .15s;width:100%;text-align:left;min-height:34px}
+.nav-item:hover{background:var(--hover)}
+.nav-item svg{flex-shrink:0;color:var(--t2)}
 
-.mi-icon{display:flex;align-items:center;justify-content:center;width:20px;height:20px;flex-shrink:0}
-.mi-label{flex:1;font-size:14px}
-.mi-kbd{display:flex;align-items:center;gap:2px;color:var(--text-tertiary);font-size:11px}
-.mi-kbd kbd{font-family:var(--font);padding:1px 4px;border-radius:3px;background:rgba(255,255,255,.08);font-size:11px}
-
-.sb-scroll{flex:1;overflow-y:auto;overflow-x:hidden;padding:4px 8px}
-.sb-scroll::-webkit-scrollbar{width:4px}
+/* History */
+.sb-scroll{flex:1;overflow-y:auto;overflow-x:hidden;padding:4px 6px;margin-top:4px}
+.sb-scroll::-webkit-scrollbar{width:3px}
 .sb-scroll::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px}
 
-.h-section{margin-bottom:4px}
-.h-label{font-size:12px;color:var(--text-tertiary);padding:8px 10px 4px;font-weight:500}
-.h-item{display:flex;align-items:center;padding:7px 10px;border-radius:8px;color:var(--text-secondary);font-size:14px;transition:background .15s,color .15s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-height:34px}
-.h-item:hover{background:var(--hover);color:var(--text-primary)}
-.h-item.active{background:var(--active);color:var(--text-primary)}
+.h-label{font-size:12px;color:var(--t3);padding:6px 8px 3px;font-weight:500}
+.h-item{display:flex;align-items:center;padding:6px 8px;border-radius:8px;color:var(--t2);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-height:32px;transition:background .15s,color .15s}
+.h-item:hover{background:var(--hover);color:var(--t1)}
+.h-item.active{background:var(--active);color:var(--t1)}
 
-.sb-login{flex-shrink:0;padding:16px;border-top:1px solid var(--border)}
-.login-title{font-weight:600;font-size:14px;margin-bottom:6px}
-.login-desc{font-size:13px;color:var(--text-tertiary);margin-bottom:12px;line-height:1.5}
-.btn-login{display:flex;align-items:center;justify-content:center;width:100%;padding:9px 16px;border-radius:8px;border:none;background:var(--text-primary);color:#000;font-size:14px;font-weight:600;margin-bottom:6px;transition:opacity .15s}
-.btn-login:hover{opacity:.9}
-.btn-signup{display:flex;align-items:center;justify-content:center;width:100%;padding:9px 16px;border-radius:8px;border:1px solid var(--border);background:none;color:var(--text-primary);font-size:14px;font-weight:500;transition:background .15s}
-.btn-signup:hover{background:var(--hover)}
+/* Login pane */
+.sb-login{flex-shrink:0;padding:12px;border-top:1px solid var(--border);margin-top:4px}
+.sl-title{font-weight:600;font-size:13px;margin-bottom:4px;color:var(--t1)}
+.sl-desc{font-size:12px;color:var(--t3);margin-bottom:10px;line-height:1.4}
+.sl-btn{display:flex;align-items:center;justify-content:center;width:100%;padding:8px;border-radius:8px;font-size:13px;font-weight:600}
+.sl-btn.primary{background:var(--t1);color:#000;transition:opacity .15s}
+.sl-btn.primary:hover{opacity:.9}
 
-/* ── MAIN ── */
+/* ══ MAIN ══ */
 .main{flex:1;display:flex;flex-direction:column;height:100vh;overflow:hidden;min-width:0}
 
-.main-header{height:var(--header-height);display:flex;align-items:center;justify-content:space-between;padding:0 12px;flex-shrink:0;position:relative;z-index:10}
+/* Header */
+.hdr{height:var(--hh);display:flex;align-items:center;justify-content:space-between;padding:0 12px 0 8px;flex-shrink:0;position:relative;z-index:10}
 
 .model-wrap{position:relative}
-.model-btn{display:flex;align-items:center;gap:4px;padding:6px 10px;border-radius:8px;border:none;background:none;color:var(--text-primary);font-size:16px;font-weight:600;transition:background .15s}
+.model-btn{display:flex;align-items:center;gap:3px;padding:5px 8px;border-radius:8px;color:var(--t1);font-size:15px;font-weight:600;transition:background .15s}
 .model-btn:hover{background:var(--hover)}
-.model-btn svg{color:var(--text-tertiary)}
+.model-btn svg{color:var(--t3)}
 
-.hdr-right{display:flex;align-items:center;gap:8px}
-.btn-hdr-login{padding:7px 14px;border-radius:8px;border:none;background:var(--text-primary);color:#000;font-size:14px;font-weight:600;transition:opacity .15s}
-.btn-hdr-login:hover{opacity:.9}
-.btn-hdr-signup{padding:7px 14px;border-radius:8px;border:1px solid var(--border);background:none;color:var(--text-primary);font-size:14px;font-weight:500;transition:background .15s}
-.btn-hdr-signup:hover{background:var(--hover)}
+.hdr-right{display:flex;align-items:center;gap:6px}
+.hdr-login{width:63px;height:34px;border-radius:20px;border:none;background:var(--t1);color:#000;font-size:13.5px;font-weight:600;transition:opacity .15s;padding:0}
+.hdr-login:hover{opacity:.9}
+.hdr-signup{width:125px;height:36px;border-radius:20px;border:1px solid var(--border);background:none;color:var(--t1);font-size:13.5px;font-weight:500;transition:background .15s;padding:0}
+.hdr-signup:hover{background:var(--hover)}
+.hdr-help{display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;border:1px solid var(--border);color:var(--t2);font-size:13px;font-weight:500;transition:background .15s}
+.hdr-help:hover{background:var(--hover)}
 
-.thread{flex:1;overflow-y:auto;overflow-x:hidden;scroll-behavior:smooth}
-.thread::-webkit-scrollbar{width:6px}
-.thread::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:3px}
+/* ══ THREAD ══ */
+.thread{flex:1;overflow-y:auto;overflow-x:hidden;scroll-behavior:smooth;display:flex;flex-direction:column}
+.thread::-webkit-scrollbar{width:5px}
+.thread::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:3px}
+.thread-inner{max-width:42rem;margin:0 auto;padding:0 16px;min-height:100%;display:flex;flex-direction:column}
 
-.thread-inner{max-width:48rem;margin:0 auto;padding:0 16px}
+/* Splash */
+.splash{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100%;padding:24px 0}
+.splash-title{font-size:26px;font-weight:600;margin-bottom:28px;color:var(--t1)}
+#rotWord{display:inline-block;transition:opacity .28s,transform .28s}
 
-/* ── SPLASH ── */
-.splash{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 0 24px;text-align:center}
-.splash-title{font-size:28px;font-weight:600;line-height:1.3;margin-bottom:32px;min-height:42px}
-#rotWord{display:inline-block;transition:opacity .3s,transform .3s}
+/* ── Composer (SLIM PILL on splash) ── */
+.composer-area{width:768px;max-width:100%;margin:0 auto}
 
-.pills{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;max-width:600px}
-.pill{padding:10px 16px;border-radius:20px;border:1px solid var(--border);background:none;color:var(--text-secondary);font-size:14px;transition:background .15s,border-color .15s,color .15s;white-space:nowrap}
-.pill:hover{background:var(--hover);border-color:rgba(255,255,255,.2);color:var(--text-primary)}
+.composer-pill{display:flex;align-items:center;background:var(--elevated);border-radius:50px;padding:0 6px 0 14px;height:56px;width:768px;max-width:100%;gap:6px;transition:box-shadow .15s}
+.composer-pill:focus-within{box-shadow:0 0 0 1px rgba(255,255,255,.18)}
 
-/* ── MESSAGES ── */
-.message{display:flex;gap:16px;margin-bottom:24px;animation:fadeUp .2s ease}
-@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.pill-plus{display:flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;color:var(--t3);flex-shrink:0;transition:color .15s}
+.pill-plus:hover{color:var(--t1)}
+
+.pill-ta{flex:1;background:none;border:none;outline:none;color:var(--t1);font-family:var(--font);font-size:15px;resize:none;min-height:24px;max-height:120px;overflow-y:hidden;padding:2px 0;line-height:1.5}
+.pill-ta::placeholder{color:var(--t3)}
+.pill-ta::-webkit-scrollbar{width:0}
+
+.pill-voice{display:flex;align-items:center;gap:5px;padding:0 14px;border-radius:20px;border:1px solid var(--border);background:none;color:var(--t2);font-size:13px;width:76px;height:36px;flex-shrink:0;transition:background .15s,color .15s}
+.pill-voice:hover{background:var(--hover);color:var(--t1)}
+
+.pill-send{display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;background:var(--t1);color:#000;flex-shrink:0;transition:opacity .15s;display:none}
+.pill-send:hover{opacity:.85}
+.pill-send.visible{display:flex}
+
+/* Suggestion list */
+.suggestions{margin-top:6px;display:flex;flex-direction:column}
+.sug-item{display:flex;align-items:center;gap:10px;padding:10px 14px;color:var(--t2);font-size:14px;border-radius:0;cursor:pointer;transition:background .15s,color .15s;border:none;border-bottom:1px solid rgba(255,255,255,0.07);background:none;width:100%;text-align:left;font-family:var(--font)}
+.sug-item:last-child{border-bottom:none}
+.sug-item:hover{background:var(--hover);color:var(--t1)}
+.sug-icon{display:flex;align-items:center;justify-content:center;width:20px;height:20px;flex-shrink:0;color:var(--t3)}
+
+/* ══ MESSAGES ══ */
+.msgs-wrap{max-width:42rem;margin:0 auto;padding:24px 0 40px;width:100%}
+.message{display:flex;gap:14px;margin-bottom:22px;animation:fu .18s ease}
+@keyframes fu{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
 .message.user{justify-content:flex-end}
 
-.m-avatar{width:28px;height:28px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:2px}
-.m-avatar.gpt{background:#fff;padding:3px}
-.m-avatar.usr{background:linear-gradient(135deg,#19c37d,#0d8f6f);color:#fff;font-size:11px;font-weight:700}
+.m-av{width:26px;height:26px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:2px}
+.m-av.gpt{background:#fff;padding:3px}
+.m-av.usr{background:linear-gradient(135deg,#19c37d,#0a7a5a);color:#fff;font-size:10px;font-weight:700}
 
 .m-body{flex:1;min-width:0}
-.user-bubble{display:inline-block;background:var(--bg-elevated);border-radius:18px;padding:12px 16px;font-size:15px;line-height:1.6;max-width:85%;word-break:break-word;float:right}
+.ububble{display:inline-block;background:var(--elevated);border-radius:18px;padding:11px 16px;font-size:14.5px;line-height:1.6;max-width:88%;word-break:break-word;float:right}
+.atext{font-size:14.5px;line-height:1.75;clear:both}
+.atext p{margin-bottom:12px}.atext p:last-child{margin-bottom:0}
+.atext ul,.atext ol{padding-left:22px;margin-bottom:12px}
+.atext li{margin-bottom:3px}
+.atext strong{font-weight:600}
+.atext h1,.atext h2,.atext h3{font-weight:600;margin:14px 0 6px}
+.atext h1{font-size:20px}.atext h2{font-size:17px}.atext h3{font-size:15px}
+.atext code{font-family:ui-monospace,monospace;background:var(--elevated);padding:2px 5px;border-radius:4px;font-size:12.5px;color:#e5c07b}
+.atext pre{background:#0d0d0d;border-radius:10px;overflow:hidden;margin:10px 0}
+.cbar{display:flex;align-items:center;justify-content:space-between;padding:7px 14px;background:#1a1a1a;font-size:12px;color:var(--t3);font-family:ui-monospace,monospace}
+.cpbtn{background:none;border:none;color:var(--t3);font-size:12px;display:flex;align-items:center;gap:4px;padding:2px 6px;border-radius:4px;transition:color .15s}
+.cpbtn:hover{color:var(--t1)}
+.atext pre code{background:none;padding:12px 16px;display:block;color:#abb2bf;font-size:12.5px;line-height:1.6;overflow-x:auto}
 
-.asst-text{font-size:15px;line-height:1.75;clear:both}
-.asst-text p{margin-bottom:12px}
-.asst-text p:last-child{margin-bottom:0}
-.asst-text ul,.asst-text ol{padding-left:24px;margin-bottom:12px}
-.asst-text li{margin-bottom:4px}
-.asst-text strong{font-weight:600}
-.asst-text h1,.asst-text h2,.asst-text h3{font-weight:600;margin:14px 0 6px}
-.asst-text h1{font-size:20px}
-.asst-text h2{font-size:18px}
-.asst-text h3{font-size:16px}
-.asst-text code{font-family:ui-monospace,monospace;background:var(--bg-elevated);padding:2px 5px;border-radius:4px;font-size:13px;color:#e5c07b}
-.asst-text pre{background:#0d0d0d;border-radius:12px;overflow:hidden;margin:12px 0}
-.code-bar{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;background:#1a1a1a;font-size:12px;color:var(--text-tertiary);font-family:ui-monospace,monospace}
-.copy-code{background:none;border:none;color:var(--text-tertiary);font-size:12px;display:flex;align-items:center;gap:4px;padding:2px 6px;border-radius:4px;transition:color .15s}
-.copy-code:hover{color:var(--text-primary)}
-.asst-text pre code{background:none;padding:14px 16px;display:block;color:#abb2bf;font-size:13px;line-height:1.6;overflow-x:auto}
-
-.m-actions{display:flex;gap:2px;margin-top:6px;opacity:0;transition:opacity .15s}
+.m-actions{display:flex;gap:1px;margin-top:5px;opacity:0;transition:opacity .15s}
 .message:hover .m-actions{opacity:1}
-.act-btn{background:none;border:none;color:var(--text-tertiary);padding:5px 7px;border-radius:6px;font-size:12px;display:flex;align-items:center;gap:4px;transition:background .15s,color .15s}
-.act-btn:hover{background:var(--hover);color:var(--text-primary)}
+.abtn{background:none;border:none;color:var(--t3);padding:4px 6px;border-radius:6px;font-size:12px;display:flex;align-items:center;gap:3px;transition:background .15s,color .15s}
+.abtn:hover{background:var(--hover);color:var(--t1)}
 
 .typing{display:flex;gap:4px;align-items:center;padding:8px 0}
-.dot{width:6px;height:6px;background:var(--text-tertiary);border-radius:50%;animation:bounce 1.2s infinite}
-.dot:nth-child(2){animation-delay:.2s}
-.dot:nth-child(3){animation-delay:.4s}
-@keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
+.dot{width:5px;height:5px;background:var(--t3);border-radius:50%;animation:bn 1.2s infinite}
+.dot:nth-child(2){animation-delay:.2s}.dot:nth-child(3){animation-delay:.4s}
+@keyframes bn{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-4px)}}
 
-/* ── COMPOSER ── */
-.composer-wrap{flex-shrink:0;padding:8px 16px 16px;display:flex;flex-direction:column;align-items:center;gap:8px}
-.composer-box{width:100%;max-width:48rem}
+/* ══ BOTTOM COMPOSER (in-thread) ══ */
+.bottom-comp{flex-shrink:0;padding:6px 16px 14px;display:flex;flex-direction:column;align-items:center;gap:6px}
+.bc-box{width:100%;max-width:42rem}
+.bc-form{background:var(--elevated);border-radius:26px;padding:8px 8px 8px 16px;display:flex;align-items:flex-end;gap:6px;transition:box-shadow .15s}
+.bc-form:focus-within{box-shadow:0 0 0 1px rgba(255,255,255,.18)}
+.bc-ta{flex:1;background:none;border:none;outline:none;color:var(--t1);font-family:var(--font);font-size:15px;resize:none;min-height:22px;max-height:30svh;overflow-y:auto;padding:3px 0;line-height:1.5}
+.bc-ta::placeholder{color:var(--t3)}
+.bc-ta::-webkit-scrollbar{width:0}
+.bc-actions{display:flex;align-items:center;gap:4px;flex-shrink:0}
+.bc-send{display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:var(--t1);color:#000;transition:opacity .15s}
+.bc-send:disabled{background:var(--elevated2);color:var(--t3)}
+.bc-send:not(:disabled):hover{opacity:.85}
+.bc-voice{display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.08);color:var(--t2);transition:background .15s}
+.bc-voice:hover{background:var(--active)}
 
-.cform{background:var(--bg-elevated);border-radius:var(--composer-radius);padding:10px 12px 10px 16px;display:grid;grid-template-areas:"primary primary" "leading trailing";grid-template-columns:1fr auto;gap:4px;transition:box-shadow .15s}
-.cform:focus-within{box-shadow:0 0 0 1px rgba(255,255,255,.18)}
+.c-footer{font-size:11.5px;color:var(--t3);text-align:center}
+.c-footer a{color:var(--t2);text-decoration:underline;text-decoration-color:var(--t3)}
+.c-footer a:hover{text-decoration-color:var(--t2)}
 
-.cta{grid-area:primary;background:none;border:none;outline:none;color:var(--text-primary);font-family:var(--font);font-size:15px;line-height:1.6;resize:none;min-height:24px;max-height:30svh;overflow-y:auto;padding:4px 0;width:100%}
-.cta::placeholder{color:var(--text-tertiary)}
-.cta::-webkit-scrollbar{width:0}
-
-.c-leading{grid-area:leading;display:flex;align-items:center;gap:4px}
-.c-trailing{grid-area:trailing;display:flex;align-items:center;gap:6px;justify-content:flex-end}
-
-.c-btn{display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;border:none;background:none;color:var(--text-secondary);transition:background .15s,color .15s}
-.c-btn:hover{background:var(--hover);color:var(--text-primary)}
-
-.c-pill{display:flex;align-items:center;gap:5px;padding:6px 12px;border-radius:20px;border:none;background:none;color:var(--text-secondary);font-size:13px;height:32px;transition:background .15s,color .15s}
-.c-pill:hover{background:var(--hover);color:var(--text-primary)}
-
-.send-btn{display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;border:none;background:var(--text-primary);color:#000;flex-shrink:0;transition:opacity .15s}
-.send-btn:disabled{background:var(--bg-elevated2);color:var(--text-tertiary)}
-.send-btn:not(:disabled):hover{opacity:.85}
-
-.voice-btn{display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;border:none;background:rgba(255,255,255,.08);color:var(--text-secondary);transition:background .15s,color .15s}
-.voice-btn:hover{background:var(--active);color:var(--text-primary)}
-
-.c-footer{font-size:12px;color:var(--text-tertiary);text-align:center;line-height:1.5}
-.c-footer a{color:var(--text-primary);text-decoration:underline;text-decoration-color:var(--text-tertiary)}
-.c-footer a:hover{text-decoration-color:var(--text-primary)}
-
-/* ── DROPDOWN ── */
-.dropdown{position:absolute;top:calc(100% + 4px);left:0;background:var(--bg-elevated);border:1px solid var(--border);border-radius:12px;padding:6px;min-width:230px;z-index:100;box-shadow:0 8px 30px rgba(0,0,0,.5);display:none}
-.dropdown.open{display:block}
-.dd-item{padding:9px 12px;border-radius:8px;display:flex;align-items:center;justify-content:space-between;transition:background .12s}
-.dd-item:hover{background:var(--hover)}
-.dd-name{font-size:14px;font-weight:500}
-.dd-desc{font-size:12px;color:var(--text-tertiary)}
-.dd-check{width:16px;height:16px;color:var(--green);display:none}
-.dd-item.sel .dd-check{display:block}
+/* Dropdown */
+.dd{position:absolute;top:calc(100% + 4px);left:0;background:var(--elevated);border:1px solid var(--border);border-radius:12px;padding:5px;min-width:220px;z-index:100;box-shadow:0 8px 30px rgba(0,0,0,.5);display:none}
+.dd.open{display:block}
+.ddi{padding:8px 11px;border-radius:8px;display:flex;align-items:center;justify-content:space-between;transition:background .12s;cursor:pointer}
+.ddi:hover{background:var(--hover)}
+.dd-name{font-size:13.5px;font-weight:500}
+.dd-sub{font-size:12px;color:var(--t3)}
+.dd-ck{width:15px;height:15px;color:var(--green);display:none;flex-shrink:0}
+.ddi.sel .dd-ck{display:block}
 </style>
 </head>
 <body>
 
-<aside class="sidebar">
-  <div class="sb-header">
-    <button class="logo-btn" onclick="newChat()">
-      <svg width="24" height="24" viewBox="0 0 41 41" fill="none"><path d="M37.532 16.87a9.963 9.963 0 00-.856-8.184 10.078 10.078 0 00-10.855-4.835 9.964 9.964 0 00-7.516-3.35 10.079 10.079 0 00-9.614 6.977 9.967 9.967 0 00-6.664 4.834 10.08 10.08 0 001.24 11.817 9.965 9.965 0 00.856 8.185 10.079 10.079 0 0010.855 4.835 9.965 9.965 0 007.516 3.35 10.078 10.078 0 009.617-6.981 9.967 9.967 0 006.663-4.834 10.079 10.079 0 00-1.243-11.813zM22.498 37.886a7.474 7.474 0 01-4.799-1.735c.061-.033.168-.091.237-.134l7.964-4.6a1.294 1.294 0 00.655-1.134V19.054l3.366 1.944a.12.12 0 01.066.092v9.299a7.505 7.505 0 01-7.49 7.496zM6.392 31.006a7.471 7.471 0 01-.894-5.023c.06.036.162.099.237.141l7.964 4.6a1.297 1.297 0 001.308 0l9.724-5.614v3.888a.12.12 0 01-.048.103l-8.051 4.649a7.504 7.504 0 01-10.24-2.744zM4.297 13.62A7.469 7.469 0 018.2 10.333c0 .068-.004.19-.004.274v9.201a1.294 1.294 0 00.654 1.132l9.723 5.614-3.366 1.944a.12.12 0 01-.114.012L7.044 23.86a7.504 7.504 0 01-2.747-10.24zm27.658 6.437l-9.724-5.615 3.367-1.943a.121.121 0 01.114-.012l8.048 4.648a7.498 7.498 0 01-1.158 13.528v-9.476a1.293 1.293 0 00-.647-1.13zm3.35-5.043c-.059-.037-.162-.099-.236-.141l-7.965-4.6a1.298 1.298 0 00-1.308 0l-9.723 5.614v-3.888a.12.12 0 01.048-.103l8.05-4.645a7.497 7.497 0 0111.135 7.763zm-21.063 6.929l-3.367-1.944a.12.12 0 01-.065-.092v-9.299a7.497 7.497 0 0112.293-5.756 6.94 6.94 0 00-.236.134l-7.965 4.6a1.294 1.294 0 00-.654 1.132l-.006 11.225zm1.829-3.943l4.33-2.501 4.332 2.5v4.999l-4.331 2.5-4.331-2.5V18z" fill="currentColor"/></svg>
+<!-- ══ SIDEBAR ══ -->
+<aside class="sb">
+  <div class="sb-top">
+    <button class="sb-logo" onclick="newChat()">
+      <svg width="22" height="22" viewBox="0 0 41 41" fill="none"><path d="M37.532 16.87a9.963 9.963 0 00-.856-8.184 10.078 10.078 0 00-10.855-4.835 9.964 9.964 0 00-7.516-3.35 10.079 10.079 0 00-9.614 6.977 9.967 9.967 0 00-6.664 4.834 10.08 10.08 0 001.24 11.817 9.965 9.965 0 00.856 8.185 10.079 10.079 0 0010.855 4.835 9.965 9.965 0 007.516 3.35 10.078 10.078 0 009.617-6.981 9.967 9.967 0 006.663-4.834 10.079 10.079 0 00-1.243-11.813zM22.498 37.886a7.474 7.474 0 01-4.799-1.735c.061-.033.168-.091.237-.134l7.964-4.6a1.294 1.294 0 00.655-1.134V19.054l3.366 1.944a.12.12 0 01.066.092v9.299a7.505 7.505 0 01-7.49 7.496zM6.392 31.006a7.471 7.471 0 01-.894-5.023c.06.036.162.099.237.141l7.964 4.6a1.297 1.297 0 001.308 0l9.724-5.614v3.888a.12.12 0 01-.048.103l-8.051 4.649a7.504 7.504 0 01-10.24-2.744zM4.297 13.62A7.469 7.469 0 018.2 10.333c0 .068-.004.19-.004.274v9.201a1.294 1.294 0 00.654 1.132l9.723 5.614-3.366 1.944a.12.12 0 01-.114.012L7.044 23.86a7.504 7.504 0 01-2.747-10.24zm27.658 6.437l-9.724-5.615 3.367-1.943a.121.121 0 01.114-.012l8.048 4.648a7.498 7.498 0 01-1.158 13.528v-9.476a1.293 1.293 0 00-.647-1.13zm3.35-5.043c-.059-.037-.162-.099-.236-.141l-7.965-4.6a1.298 1.298 0 00-1.308 0l-9.723 5.614v-3.888a.12.12 0 01.048-.103l8.05-4.645a7.497 7.497 0 0111.135 7.763zm-21.063 6.929l-3.367-1.944a.12.12 0 01-.065-.092v-9.299a7.497 7.497 0 0112.293-5.756 6.94 6.94 0 00-.236.134l-7.965 4.6a1.294 1.294 0 00-.654 1.132l-.006 11.225zm1.829-3.943l4.33-2.501 4.332 2.5v4.999l-4.331 2.5-4.331-2.5V18z" fill="currentColor"/></svg>
     </button>
-    <div style="display:flex;gap:2px">
-      <button class="icon-btn" title="Search">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-      </button>
-      <button class="icon-btn" title="New chat" onclick="newChat()">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-      </button>
-    </div>
+    <!-- Collapse sidebar icon -->
+    <button class="ib" title="Close sidebar">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/></svg>
+    </button>
   </div>
 
   <div class="sb-nav">
-    <button class="menu-item" onclick="newChat()">
-      <div class="mi-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></div>
-      <span class="mi-label">New chat</span>
-      <div class="mi-kbd"><kbd>Ctrl</kbd><kbd>Shift</kbd><kbd>O</kbd></div>
+    <button class="nav-item" onclick="newChat()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+      New chat
     </button>
-    <button class="menu-item">
-      <div class="mi-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></div>
-      <span class="mi-label">Search chats</span>
-      <div class="mi-kbd"><kbd>Ctrl</kbd><kbd>K</kbd></div>
+    <button class="nav-item">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      Search chats
     </button>
-  </div>
-
-  <div style="padding:4px 8px;display:flex;flex-direction:column;gap:1px;flex-shrink:0">
-    <a class="menu-item" href="#" onclick="return false">
-      <div class="mi-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg></div>
-      <span class="mi-label">Images</span>
+    <a class="nav-item" href="#" onclick="return false">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+      Images
     </a>
-    <a class="menu-item" href="#" onclick="return false">
-      <div class="mi-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div>
-      <span class="mi-label">Apps</span>
+    <a class="nav-item" href="#" onclick="return false">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+      Apps
     </a>
-    <a class="menu-item" href="#" onclick="return false">
-      <div class="mi-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg></div>
-      <span class="mi-label">Deep research</span>
+    <a class="nav-item" href="#" onclick="return false">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      Deep research
     </a>
-    <a class="menu-item" href="#" onclick="return false">
-      <div class="mi-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></div>
-      <span class="mi-label">Health</span>
+    <a class="nav-item" href="#" onclick="return false">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+      Health
     </a>
   </div>
 
   <div class="sb-scroll">
-    <div class="h-section">
-      <div class="h-label">Today</div>
-      <a class="h-item active" href="#" onclick="return false">ChatGPT UI Clone</a>
-      <a class="h-item" href="#" onclick="return false">React hooks deep dive</a>
-      <a class="h-item" href="#" onclick="return false">Python async patterns</a>
-    </div>
-    <div class="h-section">
-      <div class="h-label">Yesterday</div>
-      <a class="h-item" href="#" onclick="return false">Marketing email draft</a>
-      <a class="h-item" href="#" onclick="return false">SQL query optimization</a>
-      <a class="h-item" href="#" onclick="return false">Travel itinerary Japan</a>
-    </div>
-    <div class="h-section">
-      <div class="h-label">Previous 7 days</div>
-      <a class="h-item" href="#" onclick="return false">Regex cheat sheet</a>
-      <a class="h-item" href="#" onclick="return false">Cover letter for PM role</a>
-      <a class="h-item" href="#" onclick="return false">Explain quantum computing</a>
-      <a class="h-item" href="#" onclick="return false">Docker compose setup</a>
-    </div>
-    <div class="h-section">
-      <div class="h-label">March</div>
-      <a class="h-item" href="#" onclick="return false">Budget spreadsheet help</a>
-      <a class="h-item" href="#" onclick="return false">Book recommendations sci-fi</a>
-      <a class="h-item" href="#" onclick="return false">Explain neural networks</a>
-    </div>
+    <div class="h-label">Today</div>
+    <a class="h-item active" href="#" onclick="return false">ChatGPT UI Clone</a>
+    <a class="h-item" href="#" onclick="return false">React hooks deep dive</a>
+    <a class="h-item" href="#" onclick="return false">Python async patterns</a>
+    <div class="h-label" style="margin-top:8px">Yesterday</div>
+    <a class="h-item" href="#" onclick="return false">Marketing email draft</a>
+    <a class="h-item" href="#" onclick="return false">SQL query optimization</a>
+    <a class="h-item" href="#" onclick="return false">Travel itinerary Japan</a>
+    <div class="h-label" style="margin-top:8px">Previous 7 days</div>
+    <a class="h-item" href="#" onclick="return false">Regex cheat sheet</a>
+    <a class="h-item" href="#" onclick="return false">Cover letter for PM role</a>
+    <a class="h-item" href="#" onclick="return false">Explain quantum computing</a>
+    <div class="h-label" style="margin-top:8px">March</div>
+    <a class="h-item" href="#" onclick="return false">Budget spreadsheet help</a>
+    <a class="h-item" href="#" onclick="return false">Book recs sci-fi</a>
+    <a class="h-item" href="#" onclick="return false">Neural network explainer</a>
   </div>
 
   <div class="sb-login">
-    <p class="login-title">Get responses tailored to you</p>
-    <p class="login-desc">Log in to get answers based on saved chats, plus create images and upload files.</p>
-    <button class="btn-login">Log in</button>
-    <button class="btn-signup">Sign up for free</button>
+    <p class="sl-title">Get responses tailored to you</p>
+    <p class="sl-desc">Log in to get answers based on saved chats, plus create images and upload files.</p>
+    <button class="sl-btn primary">Log in</button>
   </div>
 </aside>
 
+<!-- ══ MAIN ══ -->
 <main class="main">
-  <header class="main-header">
+  <!-- Header -->
+  <header class="hdr">
     <div class="model-wrap">
       <button class="model-btn" id="modelBtn" onclick="toggleDD()">
-        <span id="modelName">ChatGPT</span>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        <span id="mName">ChatGPT</span>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
       </button>
-      <div class="dropdown" id="dd">
-        <div class="dd-item sel" onclick="pickModel('ChatGPT','GPT-4o',this)">
-          <div><div class="dd-name">GPT-4o</div><div class="dd-desc">Great for most tasks</div></div>
-          <svg class="dd-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      <div class="dd" id="dd">
+        <div class="ddi sel" onclick="pickM('ChatGPT',this)">
+          <div><div class="dd-name">GPT-4o</div><div class="dd-sub">Great for most tasks</div></div>
+          <svg class="dd-ck" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
         </div>
-        <div class="dd-item" onclick="pickModel('ChatGPT','GPT-4o mini',this)">
-          <div><div class="dd-name">GPT-4o mini</div><div class="dd-desc">Faster for everyday tasks</div></div>
-          <svg class="dd-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        <div class="ddi" onclick="pickM('ChatGPT',this)">
+          <div><div class="dd-name">GPT-4o mini</div><div class="dd-sub">Faster for everyday tasks</div></div>
+          <svg class="dd-ck" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
         </div>
-        <div class="dd-item" onclick="pickModel('o1','o1',this)">
-          <div><div class="dd-name">o1</div><div class="dd-desc">Uses extended thinking</div></div>
-          <svg class="dd-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        <div class="ddi" onclick="pickM('o1',this)">
+          <div><div class="dd-name">o1</div><div class="dd-sub">Extended thinking</div></div>
+          <svg class="dd-ck" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
         </div>
-        <div class="dd-item" onclick="pickModel('o3','o3',this)">
-          <div><div class="dd-name">o3</div><div class="dd-desc">Most capable reasoning</div></div>
-          <svg class="dd-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        <div class="ddi" onclick="pickM('o3',this)">
+          <div><div class="dd-name">o3</div><div class="dd-sub">Most capable reasoning</div></div>
+          <svg class="dd-ck" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
         </div>
-        <div class="dd-item" onclick="pickModel('o3-mini','o3-mini',this)">
-          <div><div class="dd-name">o3-mini</div><div class="dd-desc">Fast reasoning model</div></div>
-          <svg class="dd-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        <div class="ddi" onclick="pickM('o3-mini',this)">
+          <div><div class="dd-name">o3-mini</div><div class="dd-sub">Fast reasoning</div></div>
+          <svg class="dd-ck" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
         </div>
       </div>
     </div>
     <div class="hdr-right">
-      <button class="btn-hdr-signup">Sign up for free</button>
-      <button class="btn-hdr-login">Log in</button>
+      <button class="hdr-login">Log in</button>
+      <button class="hdr-signup">Sign up for free</button>
+      <button class="hdr-help">?</button>
     </div>
   </header>
 
+  <!-- Thread scroll -->
   <div class="thread" id="thread">
     <div class="thread-inner">
+
+      <!-- SPLASH -->
       <div class="splash" id="splash">
         <div class="splash-title"><span id="rotWord">Break down a topic</span></div>
-        <div class="pills">
-          <button class="pill" onclick="fill('Create a to-do list for my project')">Create a to-do list</button>
-          <button class="pill" onclick="fill('Summarize this text for me')">Summarize text</button>
-          <button class="pill" onclick="fill('Help me debug my code')">Debug code</button>
-          <button class="pill" onclick="fill(\'Help me write a professional email\')">Draft an email</button>
-          <button class="pill" onclick="fill('Explain a concept to me')">Explain a concept</button>
-          <button class="pill" onclick="fill('Analyze data and give insights')">Analyze data</button>
+
+        <!-- Slim pill composer on splash -->
+        <div class="composer-area">
+          <div class="composer-pill" id="splashPill">
+            <button class="pill-plus" title="Attach">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </button>
+            <textarea class="pill-ta" id="splashTA" placeholder="Ask anything" rows="1"
+              onkeydown="onKey(event,'splash')" oninput="onInp(this,'splash')"></textarea>
+            <button class="pill-voice" id="splashVoice">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 013 3v7a3 3 0 01-6 0V5a3 3 0 013-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/></svg>
+              Voice
+            </button>
+            <button class="pill-send" id="splashSend" onclick="sendFrom('splash')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+            </button>
+          </div>
+
+          <!-- Suggestion rows (dynamic) -->
+          <div class="suggestions" id="sugsList" style="transition:opacity .28s"></div>
         </div>
       </div>
+
+      <!-- Messages -->
       <div id="msgs"></div>
     </div>
   </div>
 
-  <div class="composer-wrap">
-    <div class="composer-box">
-      <div class="cform" id="cform">
-        <textarea class="cta" id="cta" placeholder="Ask anything" rows="1"
-          onkeydown="onKey(event)" oninput="onInp(this)"></textarea>
-        <div class="c-leading">
-          <button class="c-btn" title="Attach">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>
+  <!-- Bottom composer (shows after first message) -->
+  <div class="bottom-comp" id="bottomComp" style="display:none">
+    <div class="bc-box">
+      <div class="bc-form">
+        <textarea class="bc-ta" id="bcTA" placeholder="Ask anything" rows="1"
+          onkeydown="onKey(event,'bottom')" oninput="onInp(this,'bottom')"></textarea>
+        <div class="bc-actions">
+          <button class="bc-voice" id="bcVoice">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 013 3v7a3 3 0 01-6 0V5a3 3 0 013-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/></svg>
           </button>
-          <button class="c-pill">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-            Search
-          </button>
-          <button class="c-pill">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
-            Reason
-          </button>
-        </div>
-        <div class="c-trailing">
-          <button class="voice-btn" id="voiceBtn">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 013 3v7a3 3 0 01-6 0V5a3 3 0 013-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
-          </button>
-          <button class="send-btn" id="sendBtn" disabled onclick="send()">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+          <button class="bc-send" id="bcSend" disabled onclick="sendFrom('bottom')">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
           </button>
         </div>
       </div>
     </div>
-    <div class="c-footer">
-      By messaging ChatGPT, you agree to our <a href="#">Terms</a> and have read our <a href="#">Privacy Policy</a>. See <a href="#">Cookie Preferences</a>.
-    </div>
+    <div class="c-footer">By messaging ChatGPT, an AI chatbot, you agree to our <a href="#">Terms</a> and have read our <a href="#">Privacy Policy</a>.</div>
+  </div>
+
+  <!-- Footer on splash -->
+  <div class="c-footer" id="splashFooter" style="padding:8px 16px 14px;text-align:center">
+    By messaging ChatGPT, an AI chatbot, you agree to our <a href="#">Terms</a> and have read our <a href="#">Privacy Policy</a>.
   </div>
 </main>
 
 <script>
-// Rotating headline
-const WORDS = ['Break down a topic','Write cleaner code','Plan your week','Explore a new idea','Draft a message','Analyze your data'];
-let wi = 0;
-const rotEl = document.getElementById('rotWord');
-setInterval(() => {
-  rotEl.style.opacity = '0'; rotEl.style.transform = 'translateY(8px)'; rotEl.style.transition = 'opacity .3s,transform .3s';
-  setTimeout(() => { wi = (wi+1)%WORDS.length; rotEl.textContent = WORDS[wi]; rotEl.style.opacity='1'; rotEl.style.transform='translateY(0)'; }, 300);
-}, 3200);
+// ── Rotating headline + matched suggestions
+const SLIDES=[
+  {
+    headline:'Break down a topic',
+    sugs:[
+      {icon:'clock',text:'Tell me what book I should read next'},
+      {icon:'edit',text:'Make this shorter but still clear'},
+      {icon:'book',text:"Explain cricket rules to me like I'm 5"},
+      {icon:'clock',text:'Tell me what book I should read next'},
+    ]
+  },
+  {
+    headline:'Search for an answer',
+    sugs:[
+      {icon:'clock',text:'Suggest a sleep schedule that works'},
+      {icon:'image',text:"See how I'd look with a different eye color"},
+      {icon:'edit',text:'Make a message sound friendlier or more professional'},
+      {icon:'image',text:'Create a plushie of me from my photo'},
+    ]
+  },
+  {
+    headline:'Write cleaner code',
+    sugs:[
+      {icon:'code',text:'Refactor this function to be more readable'},
+      {icon:'code',text:'Add error handling to my API call'},
+      {icon:'edit',text:'Write unit tests for this component'},
+      {icon:'code',text:'Explain what this regex does'},
+    ]
+  },
+  {
+    headline:'Plan your week',
+    sugs:[
+      {icon:'clock',text:'Build me a 5-day workout split'},
+      {icon:'clock',text:'Make a meal prep plan for the week'},
+      {icon:'edit',text:'Help me prioritize my to-do list'},
+      {icon:'clock',text:'Plan a productive morning routine'},
+    ]
+  },
+];
 
-// Dropdown
-function toggleDD(){ document.getElementById('dd').classList.toggle('open'); }
-document.addEventListener('click', e => { if(!e.target.closest('.model-wrap')) document.getElementById('dd').classList.remove('open'); });
-function pickModel(d,_,el){ document.querySelectorAll('.dd-item').forEach(x=>x.classList.remove('sel')); el.classList.add('sel'); document.getElementById('modelName').textContent=d; document.getElementById('dd').classList.remove('open'); }
+const ICONS={
+  clock:`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>`,
+  edit:`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`,
+  book:`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>`,
+  image:`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>`,
+  code:`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>`,
+};
 
-// Textarea
-function onInp(el){
-  el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,window.innerHeight*.3)+'px';
-  document.getElementById('sendBtn').disabled = !el.value.trim() || busy;
-  document.getElementById('voiceBtn').style.display = el.value.trim()?'none':'';
+let wi=0;
+const rotEl=document.getElementById('rotWord');
+const sugsEl=document.getElementById('sugsList');
+
+function renderSugs(slide){
+  sugsEl.innerHTML=slide.sugs.map(s=>`
+    <button class="sug-item" onclick="fill(${JSON.stringify(s.text)})">
+      <div class="sug-icon">${ICONS[s.icon]}</div>
+      ${s.text}
+    </button>`).join('');
 }
-function onKey(e){ if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); if(!document.getElementById('sendBtn').disabled) send(); } }
-function fill(t){ const ta=document.getElementById('cta'); ta.value=t; onInp(ta); ta.focus(); }
+renderSugs(SLIDES[0]);
 
-// Chat
-let msgs=[]; let busy=false;
-const SYS='You are ChatGPT, a helpful AI assistant made by OpenAI. Be helpful, concise, and friendly. Use markdown for code, lists, and formatting when appropriate.';
+setInterval(()=>{
+  rotEl.style.opacity='0';rotEl.style.transform='translateY(8px)';
+  sugsEl.style.opacity='0';
+  setTimeout(()=>{
+    wi=(wi+1)%SLIDES.length;
+    rotEl.textContent=SLIDES[wi].headline;
+    rotEl.style.opacity='1';rotEl.style.transform='translateY(0)';
+    renderSugs(SLIDES[wi]);
+    sugsEl.style.opacity='1';
+  },280);
+},3200);
 
-function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+// ── Dropdown
+function toggleDD(){document.getElementById('dd').classList.toggle('open');}
+document.addEventListener('click',e=>{if(!e.target.closest('.model-wrap'))document.getElementById('dd').classList.remove('open');});
+function pickM(name,el){document.querySelectorAll('.ddi').forEach(x=>x.classList.remove('sel'));el.classList.add('sel');document.getElementById('mName').textContent=name;document.getElementById('dd').classList.remove('open');}
 
-function md(text){
-  text=text.replace(/```(\w*)\n?([\s\S]*?)```/g,(_,lang,code)=>`<pre><div class="code-bar"><span>${lang||'code'}</span><button class="copy-code" onclick="cc(this)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Copy code</button></div><code>${esc(code.trim())}</code></pre>`);
-  text=text.replace(/`([^`\n]+)`/g,'<code>$1</code>');
-  text=text.replace(/\*\*\*(.*?)\*\*\*/g,'<strong><em>$1</em></strong>');
-  text=text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
-  text=text.replace(/\*(.*?)\*/g,'<em>$1</em>');
-  text=text.replace(/^### (.+)$/gm,'<h3>$1</h3>');
-  text=text.replace(/^## (.+)$/gm,'<h2>$1</h2>');
-  text=text.replace(/^# (.+)$/gm,'<h1>$1</h1>');
-  text=text.replace(/^[-*] (.+)$/gm,'<li>$1</li>');
-  text=text.replace(/^\d+\. (.+)$/gm,'<li>$1</li>');
-  return text.split(/\n\n+/).map(b=>{b=b.trim();if(!b)return'';if(b.startsWith('<'))return b;return`<p>${b.replace(/\n/g,'<br>')}</p>`;}).join('');
+// ── Textarea helpers
+function onInp(el,src){
+  el.style.height='auto';
+  el.style.height=Math.min(el.scrollHeight,window.innerHeight*.3)+'px';
+  const has=!!el.value.trim();
+  if(src==='splash'){
+    document.getElementById('splashSend').classList.toggle('visible',has);
+    document.getElementById('splashVoice').style.display=has?'none':'';
+  } else {
+    document.getElementById('bcSend').disabled=!has||busy;
+    document.getElementById('bcVoice').style.display=has?'none':'';
+  }
+}
+function onKey(e,src){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendFrom(src);}}
+function fill(t){
+  const ta=document.getElementById('splashTA');
+  ta.value=t;onInp(ta,'splash');ta.focus();
 }
 
-function cc(btn){
-  const code=btn.closest('pre').querySelector('code').innerText;
-  navigator.clipboard.writeText(code).then(()=>{const o=btn.innerHTML;btn.innerHTML='✓ Copied!';setTimeout(()=>btn.innerHTML=o,2000);});
-}
+// ── State
+let msgs=[],busy=false;
+const SYS='You are ChatGPT, a helpful AI assistant made by OpenAI. Be helpful and concise. Use markdown for code and formatting.';
 
-function scrollBot(){ const t=document.getElementById('thread'); t.scrollTop=t.scrollHeight; }
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function md(t){
+  t=t.replace(/```(\w*)\n?([\s\S]*?)```/g,(_,lang,code)=>`<pre><div class="cbar"><span>${lang||'code'}</span><button class="cpbtn" onclick="cc(this)">Copy code</button></div><code>${esc(code.trim())}</code></pre>`);
+  t=t.replace(/`([^`\n]+)`/g,'<code>$1</code>');
+  t=t.replace(/\*\*\*(.*?)\*\*\*/g,'<strong><em>$1</em></strong>');
+  t=t.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
+  t=t.replace(/\*(.*?)\*/g,'<em>$1</em>');
+  t=t.replace(/^### (.+)$/gm,'<h3>$1</h3>');
+  t=t.replace(/^## (.+)$/gm,'<h2>$1</h2>');
+  t=t.replace(/^# (.+)$/gm,'<h1>$1</h1>');
+  t=t.replace(/^[-*] (.+)$/gm,'<li>$1</li>');
+  t=t.replace(/^\d+\. (.+)$/gm,'<li>$1</li>');
+  return t.split(/\n\n+/).map(b=>{b=b.trim();if(!b)return'';if(b.startsWith('<'))return b;return`<p>${b.replace(/\n/g,'<br>')}</p>`;}).join('');
+}
+function cc(btn){navigator.clipboard.writeText(btn.closest('pre').querySelector('code').innerText).then(()=>{const o=btn.textContent;btn.textContent='Copied!';setTimeout(()=>btn.textContent=o,2000);});}
+
+function scrollBot(){const t=document.getElementById('thread');t.scrollTop=t.scrollHeight;}
+
+function showThread(){
+  document.getElementById('splash').style.display='none';
+  document.getElementById('splashFooter').style.display='none';
+  document.getElementById('bottomComp').style.display='';
+  document.getElementById('bcTA').focus();
+}
 
 function addMsg(role,content){
-  document.getElementById('splash').style.display='none';
   const area=document.getElementById('msgs');
   const div=document.createElement('div');
   div.className='message '+role;
   if(role==='user'){
-    div.innerHTML=`<div class="m-body" style="display:flex;justify-content:flex-end"><div class="user-bubble">${esc(content)}</div></div>`;
+    div.innerHTML=`<div class="m-body" style="display:flex;justify-content:flex-end"><div class="ububble">${esc(content)}</div></div>`;
   } else {
-    const id='ab'+Date.now();
+    const id='ab'+Date.now()+Math.random();
     div.innerHTML=`
-      <div class="m-avatar gpt"><svg width="20" height="20" viewBox="0 0 41 41" fill="none"><path d="M37.532 16.87a9.963 9.963 0 00-.856-8.184 10.078 10.078 0 00-10.855-4.835 9.964 9.964 0 00-7.516-3.35 10.079 10.079 0 00-9.614 6.977 9.967 9.967 0 00-6.664 4.834 10.08 10.08 0 001.24 11.817 9.965 9.965 0 00.856 8.185 10.079 10.079 0 0010.855 4.835 9.965 9.965 0 007.516 3.35 10.078 10.078 0 009.617-6.981 9.967 9.967 0 006.663-4.834 10.079 10.079 0 00-1.243-11.813z" fill="black"/></svg></div>
+      <div class="m-av gpt"><svg width="18" height="18" viewBox="0 0 41 41" fill="none"><path d="M37.532 16.87a9.963 9.963 0 00-.856-8.184 10.078 10.078 0 00-10.855-4.835 9.964 9.964 0 00-7.516-3.35 10.079 10.079 0 00-9.614 6.977 9.967 9.967 0 00-6.664 4.834 10.08 10.08 0 001.24 11.817 9.965 9.965 0 00.856 8.185 10.079 10.079 0 0010.855 4.835 9.965 9.965 0 007.516 3.35 10.078 10.078 0 009.617-6.981 9.967 9.967 0 006.663-4.834 10.079 10.079 0 00-1.243-11.813z" fill="black"/></svg></div>
       <div class="m-body">
-        <div class="asst-text" id="${id}"></div>
+        <div class="atext" id="${id}"></div>
         <div class="m-actions">
-          <button class="act-btn" onclick="cpMsg(this)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Copy</button>
-          <button class="act-btn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 00-3-3l-4 9v11h11.28a2 2 0 002-1.7l1.38-9a2 2 0 00-2-2.3H14z"/><path d="M7 22H4a2 2 0 01-2-2v-7a2 2 0 012-2h3"/></svg></button>
-          <button class="act-btn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 15v4a3 3 0 003 3l4-9V2H5.72a2 2 0 00-2 1.7l-1.38 9a2 2 0 002 2.3H10z"/><path d="M17 2h2.67A2.31 2.31 0 0122 4v7a2.31 2.31 0 01-2.33 2H17"/></svg></button>
-          <button class="act-btn" onclick="regen()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 101.5-5.31"/></svg></button>
+          <button class="abtn" onclick="cpMsg(this)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Copy</button>
+          <button class="abtn"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 00-3-3l-4 9v11h11.28a2 2 0 002-1.7l1.38-9a2 2 0 00-2-2.3H14z"/><path d="M7 22H4a2 2 0 01-2-2v-7a2 2 0 012-2h3"/></svg></button>
+          <button class="abtn"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 15v4a3 3 0 003 3l4-9V2H5.72a2 2 0 00-2 1.7l-1.38 9a2 2 0 002 2.3H10z"/><path d="M17 2h2.67A2.31 2.31 0 0122 4v7a2.31 2.31 0 01-2.33 2H17"/></svg></button>
         </div>
       </div>`;
   }
@@ -431,74 +504,67 @@ function addMsg(role,content){
   scrollBot();
   return div;
 }
+function cpMsg(btn){const t=btn.closest('.m-body').querySelector('.atext').innerText;navigator.clipboard.writeText(t).then(()=>{const o=btn.textContent;btn.textContent='Copied!';setTimeout(()=>btn.textContent=o,2000);});}
 
-function cpMsg(btn){
-  const t=btn.closest('.m-body').querySelector('.asst-text').innerText;
-  navigator.clipboard.writeText(t);
-  const o=btn.innerHTML; btn.innerHTML='✓ Copied!'; setTimeout(()=>btn.innerHTML=o,2000);
-}
-
-function regen(){
-  const area=document.getElementById('msgs');
-  const all=area.querySelectorAll('.message.assistant');
-  if(all.length) all[all.length-1].remove();
-  if(msgs.length&&msgs[msgs.length-1].role==='assistant') msgs.pop();
-  callAPI();
-}
-
-async function send(){
-  const ta=document.getElementById('cta');
+async function sendFrom(src){
+  const taId=src==='splash'?'splashTA':'bcTA';
+  const ta=document.getElementById(taId);
   const text=ta.value.trim();
-  if(!text||busy) return;
-  busy=true; ta.value=''; ta.style.height='auto';
-  document.getElementById('sendBtn').disabled=true;
-  document.getElementById('voiceBtn').style.display='';
+  if(!text||busy)return;
+  busy=true;
+  ta.value='';ta.style.height='auto';
+  if(src==='splash'){
+    document.getElementById('splashSend').classList.remove('visible');
+    document.getElementById('splashVoice').style.display='';
+    showThread();
+  } else {
+    document.getElementById('bcSend').disabled=true;
+    document.getElementById('bcVoice').style.display='';
+  }
   msgs.push({role:'user',content:text});
   addMsg('user',text);
   await callAPI();
 }
 
 async function callAPI(){
-  busy=true;
   const div=addMsg('assistant','');
-  const body=div.querySelector('.asst-text');
+  const body=div.querySelector('.atext');
   body.innerHTML='<div class="typing"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
   try{
     const res=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
-      headers:{'Content-Type':'application/json'},
+      headers:{'Content-Type':'application/json','anthropic-dangerous-direct-browser-access':'true'},
       body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:SYS,messages:msgs,stream:true})
     });
     body.innerHTML='';
     let full='';
-    const reader=res.body.getReader();
-    const dec=new TextDecoder();
+    const reader=res.body.getReader();const dec=new TextDecoder();
     while(true){
-      const{done,value}=await reader.read();
-      if(done) break;
+      const{done,value}=await reader.read();if(done)break;
       for(const line of dec.decode(value,{stream:true}).split('\n')){
-        if(!line.startsWith('data: ')) continue;
-        const d=line.slice(6).trim();
-        if(d==='[DONE]') break;
+        if(!line.startsWith('data: '))continue;
+        const d=line.slice(6).trim();if(d==='[DONE]')break;
         try{const p=JSON.parse(d);if(p.type==='content_block_delta'&&p.delta?.text){full+=p.delta.text;body.innerHTML=md(full);scrollBot();}}catch{}
       }
     }
     msgs.push({role:'assistant',content:full});
-  }catch(e){
+  }catch{
     body.innerHTML='<p style="color:#f87171">Something went wrong. Please try again.</p>';
   }
   busy=false;
-  document.getElementById('sendBtn').disabled=!document.getElementById('cta').value.trim();
+  document.getElementById('bcSend').disabled=!document.getElementById('bcTA').value.trim();
 }
 
 function newChat(){
-  msgs=[]; busy=false;
+  msgs=[];busy=false;
   document.getElementById('msgs').innerHTML='';
   document.getElementById('splash').style.display='';
-  document.getElementById('cta').value='';
-  document.getElementById('cta').style.height='auto';
-  document.getElementById('sendBtn').disabled=true;
-  document.getElementById('voiceBtn').style.display='';
+  document.getElementById('splashFooter').style.display='';
+  document.getElementById('bottomComp').style.display='none';
+  document.getElementById('splashTA').value='';
+  document.getElementById('splashTA').style.height='auto';
+  document.getElementById('splashSend').classList.remove('visible');
+  document.getElementById('splashVoice').style.display='';
 }
 </script>
 </body>
