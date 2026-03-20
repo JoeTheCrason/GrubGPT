@@ -3,33 +3,39 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ChatGPT</title>
+<title>GrubGPT</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#212121;
-  --sb:#171717;
-  --elevated:#2f2f2f;
-  --elevated2:#3a3a3a;
-  --border:rgba(255,255,255,0.1);
-  --hover:rgba(255,255,255,0.06);
-  --active:rgba(255,255,255,0.1);
-  --t1:#ececec;
-  --t2:#b4b4b4;
-  --t3:#8e8ea0;
-  --green:#10a37f;
+  --bg:#1a1108;
+  --sb:#120d05;
+  --elevated:#2a1f0f;
+  --elevated2:#3a2e1a;
+  --border:rgba(255,200,100,0.12);
+  --hover:rgba(255,180,60,0.07);
+  --active:rgba(255,180,60,0.13);
+  --t1:#f5ead6;
+  --t2:#c9aa7c;
+  --t3:#8a7055;
+  --accent:#e88c3a;
+  --accent-dim:#a85f1a;
   --sb-w:259px;
   --hh:48px;
-  --font:ui-sans-serif,-apple-system,system-ui,"Segoe UI",Helvetica,Arial,sans-serif;
+  --font:'DM Sans',ui-sans-serif,system-ui,sans-serif;
+  --font-display:'Playfair Display',Georgia,serif;
 }
 html,body{height:100%}
 body{font-family:var(--font);background:var(--bg);color:var(--t1);display:flex;overflow:hidden;font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;opacity:.6}
 svg{display:block}
 button{cursor:pointer;font-family:var(--font);border:none;background:none}
 a{text-decoration:none;color:inherit}
 
 /* ══ SIDEBAR ══ */
-.sb{width:var(--sb-w);background:var(--sb);display:flex;flex-direction:column;height:100vh;flex-shrink:0}
+.sb{width:var(--sb-w);background:var(--sb);display:flex;flex-direction:column;height:100vh;flex-shrink:0;border-right:1px solid var(--border)}
 
 .sb-top{height:var(--hh);display:flex;align-items:center;justify-content:space-between;padding:0 8px;flex-shrink:0}
 
@@ -42,8 +48,9 @@ a{text-decoration:none;color:inherit}
 /* Nav items */
 .sb-nav{padding:4px 6px;display:flex;flex-direction:column;gap:1px;flex-shrink:0}
 
-.nav-item{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:8px;color:var(--t1);font-size:13.5px;transition:background .15s;width:100%;text-align:left;min-height:34px}
-.nav-item:hover{background:var(--hover)}
+.nav-item{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:8px;color:var(--t2);font-size:13.5px;transition:background .15s,color .15s;width:100%;text-align:left;min-height:34px}
+.nav-item:hover{background:var(--hover);color:var(--t1)}
+.nav-item svg{color:var(--t3)}
 .nav-item svg{flex-shrink:0;color:var(--t2)}
 
 /* History */
@@ -54,14 +61,14 @@ a{text-decoration:none;color:inherit}
 .h-label{font-size:12px;color:var(--t3);padding:6px 8px 3px;font-weight:500}
 .h-item{display:flex;align-items:center;padding:6px 8px;border-radius:8px;color:var(--t2);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-height:32px;transition:background .15s,color .15s}
 .h-item:hover{background:var(--hover);color:var(--t1)}
-.h-item.active{background:var(--active);color:var(--t1)}
+.h-item.active{background:rgba(232,140,58,.15);color:var(--t1);border-left:2px solid var(--accent)}
 
 /* Login pane */
 .sb-login{flex-shrink:0;padding:12px;border-top:1px solid var(--border);margin-top:4px}
 .sl-title{font-weight:600;font-size:13px;margin-bottom:4px;color:var(--t1)}
 .sl-desc{font-size:12px;color:var(--t3);margin-bottom:10px;line-height:1.4}
 .sl-btn{display:flex;align-items:center;justify-content:center;width:100%;padding:8px;border-radius:8px;font-size:13px;font-weight:600}
-.sl-btn.primary{background:var(--t1);color:#000;transition:opacity .15s}
+.sl-btn.primary{background:var(--accent);color:#fff;font-weight:600;transition:opacity .15s;border:none}
 .sl-btn.primary:hover{opacity:.9}
 
 /* ══ MAIN ══ */
@@ -71,15 +78,15 @@ a{text-decoration:none;color:inherit}
 .hdr{height:var(--hh);display:flex;align-items:center;justify-content:space-between;padding:0 12px 0 8px;flex-shrink:0;position:relative;z-index:10}
 
 .model-wrap{position:relative}
-.model-btn{display:flex;align-items:center;gap:3px;padding:5px 8px;border-radius:8px;color:var(--t1);font-size:15px;font-weight:600;transition:background .15s}
+.model-btn{display:flex;align-items:center;gap:3px;padding:5px 8px;border-radius:8px;color:var(--t1);font-size:16px;font-weight:600;font-family:var(--font-display);transition:background .15s;letter-spacing:-0.01em}
 .model-btn:hover{background:var(--hover)}
 .model-btn svg{color:var(--t3)}
 
 .hdr-right{display:flex;align-items:center;gap:6px}
-.hdr-login{width:63px;height:34px;border-radius:20px;border:none;background:var(--t1);color:#000;font-size:13.5px;font-weight:600;transition:opacity .15s;padding:0}
+.hdr-login{width:63px;height:34px;border-radius:20px;border:none;background:var(--accent);color:#fff;font-size:13.5px;font-weight:600;transition:opacity .15s;padding:0}
 .hdr-login:hover{opacity:.9}
-.hdr-signup{width:125px;height:36px;border-radius:20px;border:1px solid var(--border);background:none;color:var(--t1);font-size:13.5px;font-weight:500;transition:background .15s;padding:0}
-.hdr-signup:hover{background:var(--hover)}
+.hdr-signup{width:125px;height:36px;border-radius:20px;border:1px solid var(--border);background:none;color:var(--t2);font-size:13.5px;font-weight:500;transition:background .15s,color .15s;padding:0}
+.hdr-signup:hover{background:var(--hover);color:var(--t1)}
 .hdr-help{display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;border:1px solid var(--border);color:var(--t2);font-size:13px;font-weight:500;transition:background .15s}
 .hdr-help:hover{background:var(--hover)}
 
@@ -93,14 +100,14 @@ a{text-decoration:none;color:inherit}
 
 /* Splash */
 .splash{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100%;padding:24px 0}
-.splash-title{font-size:26px;font-weight:600;margin-bottom:28px;color:var(--t1)}
+.splash-title{font-size:30px;font-weight:600;margin-bottom:28px;color:var(--t1);font-family:var(--font-display);letter-spacing:-0.02em}
 #rotWord{display:inline-block;transition:opacity .28s,transform .28s}
 
 /* ── Composer (SLIM PILL on splash) ── */
 .composer-area{width:768px;max-width:100%;margin:0 auto}
 
-.composer-pill{display:flex;align-items:center;background:var(--elevated);border-radius:50px;padding:0 6px 0 14px;height:56px;width:768px;max-width:100%;gap:6px;transition:box-shadow .15s}
-.composer-pill:focus-within{box-shadow:0 0 0 1px rgba(255,255,255,.18)}
+.composer-pill{display:flex;align-items:center;background:var(--elevated);border-radius:50px;padding:0 6px 0 14px;height:56px;width:768px;max-width:100%;gap:6px;transition:box-shadow .15s;border:1px solid var(--border)}
+.composer-pill:focus-within{box-shadow:0 0 0 2px rgba(232,140,58,.35);border-color:var(--accent)}
 
 .pill-plus{display:flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;color:var(--t3);flex-shrink:0;transition:color .15s}
 .pill-plus:hover{color:var(--t1)}
@@ -109,16 +116,16 @@ a{text-decoration:none;color:inherit}
 .pill-ta::placeholder{color:var(--t3)}
 .pill-ta::-webkit-scrollbar{width:0}
 
-.pill-voice{display:flex;align-items:center;gap:5px;padding:0 14px;border-radius:20px;border:1px solid var(--border);background:none;color:var(--t2);font-size:13px;width:76px;height:36px;flex-shrink:0;transition:background .15s,color .15s}
-.pill-voice:hover{background:var(--hover);color:var(--t1)}
+.pill-voice{display:flex;align-items:center;gap:5px;padding:0 14px;border-radius:20px;border:1px solid var(--border);background:none;color:var(--t2);font-size:13px;width:76px;height:36px;flex-shrink:0;transition:background .15s,color .15s,border-color .15s}
+.pill-voice:hover{background:var(--hover);color:var(--t1);border-color:rgba(232,140,58,.4)}
 
-.pill-send{display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;background:var(--t1);color:#000;flex-shrink:0;transition:opacity .15s;display:none}
+.pill-send{display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;background:var(--accent);color:#fff;flex-shrink:0;transition:opacity .15s;display:none}
 .pill-send:hover{opacity:.85}
 .pill-send.visible{display:flex}
 
 /* Suggestion list */
 .suggestions{margin-top:6px;display:flex;flex-direction:column}
-.sug-item{display:flex;align-items:center;gap:10px;padding:10px 14px;color:var(--t2);font-size:14px;border-radius:0;cursor:pointer;transition:background .15s,color .15s;border:none;border-bottom:1px solid rgba(255,255,255,0.07);background:none;width:100%;text-align:left;font-family:var(--font)}
+.sug-item{display:flex;align-items:center;gap:10px;padding:10px 14px;color:var(--t2);font-size:14px;border-radius:0;cursor:pointer;transition:background .15s,color .15s;border:none;border-bottom:1px solid rgba(255,180,60,0.1);background:none;width:100%;text-align:left;font-family:var(--font)}
 .sug-item:last-child{border-bottom:none}
 .sug-item:hover{background:var(--hover);color:var(--t1)}
 .sug-icon{display:flex;align-items:center;justify-content:center;width:20px;height:20px;flex-shrink:0;color:var(--t3)}
@@ -130,11 +137,11 @@ a{text-decoration:none;color:inherit}
 .message.user{justify-content:flex-end}
 
 .m-av{width:26px;height:26px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:2px}
-.m-av.gpt{background:#fff;padding:3px}
-.m-av.usr{background:linear-gradient(135deg,#19c37d,#0a7a5a);color:#fff;font-size:10px;font-weight:700}
+.m-av.gpt{background:#2a1f0f;border:1px solid rgba(232,140,58,.3);padding:3px}
+.m-av.usr{background:linear-gradient(135deg,#e88c3a,#a85f1a);color:#fff;font-size:10px;font-weight:700}
 
 .m-body{flex:1;min-width:0}
-.ububble{display:inline-block;background:var(--elevated);border-radius:18px;padding:11px 16px;font-size:14.5px;line-height:1.6;max-width:88%;word-break:break-word;float:right}
+.ububble{display:inline-block;background:var(--elevated2);border:1px solid var(--border);border-radius:18px;padding:11px 16px;font-size:14.5px;line-height:1.6;max-width:88%;word-break:break-word;float:right}
 .atext{font-size:14.5px;line-height:1.75;clear:both}
 .atext p{margin-bottom:12px}.atext p:last-child{margin-bottom:0}
 .atext ul,.atext ol{padding-left:22px;margin-bottom:12px}
@@ -162,14 +169,14 @@ a{text-decoration:none;color:inherit}
 /* ══ BOTTOM COMPOSER (in-thread) ══ */
 .bottom-comp{flex-shrink:0;padding:6px 16px 14px;display:flex;flex-direction:column;align-items:center;gap:6px}
 .bc-box{width:100%;max-width:42rem}
-.bc-form{background:var(--elevated);border-radius:26px;padding:8px 8px 8px 16px;display:flex;align-items:flex-end;gap:6px;transition:box-shadow .15s}
-.bc-form:focus-within{box-shadow:0 0 0 1px rgba(255,255,255,.18)}
+.bc-form{background:var(--elevated);border-radius:26px;padding:8px 8px 8px 16px;display:flex;align-items:flex-end;gap:6px;transition:box-shadow .15s;border:1px solid var(--border)}
+.bc-form:focus-within{box-shadow:0 0 0 2px rgba(232,140,58,.3);border-color:var(--accent)}
 .bc-ta{flex:1;background:none;border:none;outline:none;color:var(--t1);font-family:var(--font);font-size:15px;resize:none;min-height:22px;max-height:30svh;overflow-y:auto;padding:3px 0;line-height:1.5}
 .bc-ta::placeholder{color:var(--t3)}
 .bc-ta::-webkit-scrollbar{width:0}
 .bc-actions{display:flex;align-items:center;gap:4px;flex-shrink:0}
-.bc-send{display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:var(--t1);color:#000;transition:opacity .15s}
-.bc-send:disabled{background:var(--elevated2);color:var(--t3)}
+.bc-send{display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;transition:opacity .15s}
+.bc-send:disabled{background:var(--elevated2);color:var(--t3);opacity:.5}
 .bc-send:not(:disabled):hover{opacity:.85}
 .bc-voice{display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.08);color:var(--t2);transition:background .15s}
 .bc-voice:hover{background:var(--active)}
@@ -179,14 +186,33 @@ a{text-decoration:none;color:inherit}
 .c-footer a:hover{text-decoration-color:var(--t2)}
 
 /* Dropdown */
-.dd{position:absolute;top:calc(100% + 4px);left:0;background:var(--elevated);border:1px solid var(--border);border-radius:12px;padding:5px;min-width:220px;z-index:100;box-shadow:0 8px 30px rgba(0,0,0,.5);display:none}
+.dd{position:absolute;top:calc(100% + 4px);left:0;background:var(--elevated);border:1px solid var(--border);border-radius:12px;padding:5px;min-width:220px;z-index:100;box-shadow:0 12px 40px rgba(0,0,0,.6);display:none}
 .dd.open{display:block}
 .ddi{padding:8px 11px;border-radius:8px;display:flex;align-items:center;justify-content:space-between;transition:background .12s;cursor:pointer}
 .ddi:hover{background:var(--hover)}
 .dd-name{font-size:13.5px;font-weight:500}
 .dd-sub{font-size:12px;color:var(--t3)}
-.dd-ck{width:15px;height:15px;color:var(--green);display:none;flex-shrink:0}
+.dd-ck{width:15px;height:15px;color:var(--accent);display:none;flex-shrink:0}
 .ddi.sel .dd-ck{display:block}
+
+/* ══ API KEY MODAL ══ */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.modal-overlay.hidden{display:none}
+.modal-box{background:#1e1508;border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:28px;width:420px;max-width:calc(100vw - 32px);display:flex;flex-direction:column;gap:16px}
+.modal-title{font-size:18px;font-weight:600;color:#ececec}
+.modal-desc{font-size:13.5px;color:#8e8ea0;line-height:1.6}
+.modal-desc a{color:#b4b4b4;text-decoration:underline}
+.modal-input{background:#120d05;border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:11px 14px;font-size:14px;color:#ececec;font-family:var(--font);outline:none;width:100%;transition:border-color .15s}
+.modal-input:focus{border-color:rgba(255,255,255,.3)}
+.modal-input::placeholder{color:#8e8ea0}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end}
+.modal-btn{padding:8px 18px;border-radius:8px;font-size:14px;font-weight:500;cursor:pointer;border:none;font-family:var(--font);transition:opacity .15s}
+.modal-btn.primary{background:var(--accent);color:#fff;font-weight:600}
+.modal-btn.primary:hover{opacity:.9}
+.modal-btn.secondary{background:none;border:1px solid rgba(255,255,255,.12);color:#ececec}
+.modal-btn.secondary:hover{background:rgba(255,255,255,.06)}
+.modal-error{font-size:12.5px;color:#f87171;display:none}
+.modal-error.show{display:block}
 </style>
 </head>
 <body>
@@ -195,7 +221,17 @@ a{text-decoration:none;color:inherit}
 <aside class="sb">
   <div class="sb-top">
     <button class="sb-logo" onclick="newChat()">
-      <svg width="22" height="22" viewBox="0 0 41 41" fill="none"><path d="M37.532 16.87a9.963 9.963 0 00-.856-8.184 10.078 10.078 0 00-10.855-4.835 9.964 9.964 0 00-7.516-3.35 10.079 10.079 0 00-9.614 6.977 9.967 9.967 0 00-6.664 4.834 10.08 10.08 0 001.24 11.817 9.965 9.965 0 00.856 8.185 10.079 10.079 0 0010.855 4.835 9.965 9.965 0 007.516 3.35 10.078 10.078 0 009.617-6.981 9.967 9.967 0 006.663-4.834 10.079 10.079 0 00-1.243-11.813zM22.498 37.886a7.474 7.474 0 01-4.799-1.735c.061-.033.168-.091.237-.134l7.964-4.6a1.294 1.294 0 00.655-1.134V19.054l3.366 1.944a.12.12 0 01.066.092v9.299a7.505 7.505 0 01-7.49 7.496zM6.392 31.006a7.471 7.471 0 01-.894-5.023c.06.036.162.099.237.141l7.964 4.6a1.297 1.297 0 001.308 0l9.724-5.614v3.888a.12.12 0 01-.048.103l-8.051 4.649a7.504 7.504 0 01-10.24-2.744zM4.297 13.62A7.469 7.469 0 018.2 10.333c0 .068-.004.19-.004.274v9.201a1.294 1.294 0 00.654 1.132l9.723 5.614-3.366 1.944a.12.12 0 01-.114.012L7.044 23.86a7.504 7.504 0 01-2.747-10.24zm27.658 6.437l-9.724-5.615 3.367-1.943a.121.121 0 01.114-.012l8.048 4.648a7.498 7.498 0 01-1.158 13.528v-9.476a1.293 1.293 0 00-.647-1.13zm3.35-5.043c-.059-.037-.162-.099-.236-.141l-7.965-4.6a1.298 1.298 0 00-1.308 0l-9.723 5.614v-3.888a.12.12 0 01.048-.103l8.05-4.645a7.497 7.497 0 0111.135 7.763zm-21.063 6.929l-3.367-1.944a.12.12 0 01-.065-.092v-9.299a7.497 7.497 0 0112.293-5.756 6.94 6.94 0 00-.236.134l-7.965 4.6a1.294 1.294 0 00-.654 1.132l-.006 11.225zm1.829-3.943l4.33-2.501 4.332 2.5v4.999l-4.331 2.5-4.331-2.5V18z" fill="currentColor"/></svg>
+      <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Fork -->
+  <line x1="7" y1="3" x2="7" y2="11" stroke="#e88c3a" stroke-width="1.8" stroke-linecap="round"/>
+  <line x1="5" y1="3" x2="5" y2="7" stroke="#e88c3a" stroke-width="1.8" stroke-linecap="round"/>
+  <line x1="9" y1="3" x2="9" y2="7" stroke="#e88c3a" stroke-width="1.8" stroke-linecap="round"/>
+  <path d="M5 7 Q7 9 9 7" stroke="#e88c3a" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+  <line x1="7" y1="11" x2="7" y2="23" stroke="#e88c3a" stroke-width="1.8" stroke-linecap="round"/>
+  <!-- Spoon -->
+  <ellipse cx="19" cy="7" rx="3" ry="4" stroke="#c9aa7c" stroke-width="1.8" fill="none"/>
+  <line x1="19" y1="11" x2="19" y2="23" stroke="#c9aa7c" stroke-width="1.8" stroke-linecap="round"/>
+</svg>
     </button>
     <!-- Collapse sidebar icon -->
     <button class="ib" title="Close sidebar">
@@ -232,26 +268,26 @@ a{text-decoration:none;color:inherit}
 
   <div class="sb-scroll">
     <div class="h-label">Today</div>
-    <a class="h-item active" href="#" onclick="return false">ChatGPT UI Clone</a>
-    <a class="h-item" href="#" onclick="return false">React hooks deep dive</a>
-    <a class="h-item" href="#" onclick="return false">Python async patterns</a>
+    <a class="h-item active" href="#" onclick="return false">GrubGPT branding session</a>
+    <a class="h-item" href="#" onclick="return false">Best ramen recipes</a>
+    <a class="h-item" href="#" onclick="return false">Italian pasta masterclass</a>
     <div class="h-label" style="margin-top:8px">Yesterday</div>
-    <a class="h-item" href="#" onclick="return false">Marketing email draft</a>
-    <a class="h-item" href="#" onclick="return false">SQL query optimization</a>
-    <a class="h-item" href="#" onclick="return false">Travel itinerary Japan</a>
+    <a class="h-item" href="#" onclick="return false">Dinner party planning</a>
+    <a class="h-item" href="#" onclick="return false">Sourdough starter guide</a>
+    <a class="h-item" href="#" onclick="return false">Tokyo street food guide</a>
     <div class="h-label" style="margin-top:8px">Previous 7 days</div>
-    <a class="h-item" href="#" onclick="return false">Regex cheat sheet</a>
-    <a class="h-item" href="#" onclick="return false">Cover letter for PM role</a>
-    <a class="h-item" href="#" onclick="return false">Explain quantum computing</a>
+    <a class="h-item" href="#" onclick="return false">Spice pairing guide</a>
+    <a class="h-item" href="#" onclick="return false">Knife skills tutorial</a>
+    <a class="h-item" href="#" onclick="return false">French sauces explained</a>
     <div class="h-label" style="margin-top:8px">March</div>
-    <a class="h-item" href="#" onclick="return false">Budget spreadsheet help</a>
-    <a class="h-item" href="#" onclick="return false">Book recs sci-fi</a>
-    <a class="h-item" href="#" onclick="return false">Neural network explainer</a>
+    <a class="h-item" href="#" onclick="return false">Meal budget calculator</a>
+    <a class="h-item" href="#" onclick="return false">Cookbook recommendations</a>
+    <a class="h-item" href="#" onclick="return false">Fermentation deep dive</a>
   </div>
 
   <div class="sb-login">
-    <p class="sl-title">Get responses tailored to you</p>
-    <p class="sl-desc">Log in to get answers based on saved chats, plus create images and upload files.</p>
+    <p class="sl-title">Hungry for answers?</p>
+    <p class="sl-desc">Log in to save your chats, get personalized recipes, and more.</p>
     <button class="sl-btn primary">Log in</button>
   </div>
 </aside>
@@ -262,15 +298,15 @@ a{text-decoration:none;color:inherit}
   <header class="hdr">
     <div class="model-wrap">
       <button class="model-btn" id="modelBtn" onclick="toggleDD()">
-        <span id="mName">ChatGPT</span>
+        <span id="mName">GrubGPT</span>
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
       </button>
       <div class="dd" id="dd">
-        <div class="ddi sel" onclick="pickM('ChatGPT',this)">
+        <div class="ddi sel" onclick="pickM('GrubGPT',this)">
           <div><div class="dd-name">GPT-4o</div><div class="dd-sub">Great for most tasks</div></div>
           <svg class="dd-ck" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
         </div>
-        <div class="ddi" onclick="pickM('ChatGPT',this)">
+        <div class="ddi" onclick="pickM('GrubGPT',this)">
           <div><div class="dd-name">GPT-4o mini</div><div class="dd-sub">Faster for everyday tasks</div></div>
           <svg class="dd-ck" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
         </div>
@@ -346,12 +382,12 @@ a{text-decoration:none;color:inherit}
         </div>
       </div>
     </div>
-    <div class="c-footer">By messaging ChatGPT, an AI chatbot, you agree to our <a href="#">Terms</a> and have read our <a href="#">Privacy Policy</a>.</div>
+    <div class="c-footer">By messaging GrubGPT, an AI assistant, you agree to our <a href="#">Terms</a> and have read our <a href="#">Privacy Policy</a>.</div>
   </div>
 
   <!-- Footer on splash -->
   <div class="c-footer" id="splashFooter" style="padding:8px 16px 14px;text-align:center">
-    By messaging ChatGPT, an AI chatbot, you agree to our <a href="#">Terms</a> and have read our <a href="#">Privacy Policy</a>.
+    By messaging GrubGPT, an AI assistant, you agree to our <a href="#">Terms</a> and have read our <a href="#">Privacy Policy</a>.
   </div>
 </main>
 
@@ -359,39 +395,39 @@ a{text-decoration:none;color:inherit}
 // ── Rotating headline + matched suggestions
 const SLIDES=[
   {
-    headline:'Break down a topic',
+    headline:"What's cooking today?",
     sugs:[
-      {icon:'clock',text:'Tell me what book I should read next'},
-      {icon:'edit',text:'Make this shorter but still clear'},
-      {icon:'book',text:"Explain cricket rules to me like I'm 5"},
-      {icon:'clock',text:'Tell me what book I should read next'},
+      {icon:'clock',text:'Give me a quick 20-minute dinner idea'},
+      {icon:'edit',text:'What can I make with chicken, garlic, and lemon?'},
+      {icon:'book',text:'Teach me the basics of knife skills'},
+      {icon:'clock',text:'Suggest a meal prep plan for the week'},
     ]
   },
   {
-    headline:'Search for an answer',
+    headline:'Explore any flavour',
     sugs:[
-      {icon:'clock',text:'Suggest a sleep schedule that works'},
-      {icon:'image',text:"See how I'd look with a different eye color"},
-      {icon:'edit',text:'Make a message sound friendlier or more professional'},
-      {icon:'image',text:'Create a plushie of me from my photo'},
+      {icon:'image',text:'What makes a perfect risotto?'},
+      {icon:'clock',text:'Give me a 5-ingredient pasta recipe'},
+      {icon:'edit',text:'How do I make my steak restaurant-quality?'},
+      {icon:'image',text:'What spices should every kitchen have?'},
     ]
   },
   {
-    headline:'Write cleaner code',
+    headline:'Let me help you cook',
     sugs:[
-      {icon:'code',text:'Refactor this function to be more readable'},
-      {icon:'code',text:'Add error handling to my API call'},
-      {icon:'edit',text:'Write unit tests for this component'},
-      {icon:'code',text:'Explain what this regex does'},
+      {icon:'code',text:'Convert this recipe from cups to grams'},
+      {icon:'clock',text:'Plan a 3-course dinner party menu'},
+      {icon:'edit',text:'What wine pairs well with salmon?'},
+      {icon:'code',text:'Explain the difference between baking soda and powder'},
     ]
   },
   {
-    headline:'Plan your week',
+    headline:'Ask me anything',
     sugs:[
-      {icon:'clock',text:'Build me a 5-day workout split'},
-      {icon:'clock',text:'Make a meal prep plan for the week'},
-      {icon:'edit',text:'Help me prioritize my to-do list'},
-      {icon:'clock',text:'Plan a productive morning routine'},
+      {icon:'clock',text:'Help me write a professional email'},
+      {icon:'edit',text:'Explain a concept I want to learn'},
+      {icon:'clock',text:'Debug my code'},
+      {icon:'image',text:'Plan my week and prioritize my tasks'},
     ]
   },
 ];
@@ -432,7 +468,7 @@ setInterval(()=>{
 // ── Dropdown
 function toggleDD(){document.getElementById('dd').classList.toggle('open');}
 document.addEventListener('click',e=>{if(!e.target.closest('.model-wrap'))document.getElementById('dd').classList.remove('open');});
-function pickM(name,el){document.querySelectorAll('.ddi').forEach(x=>x.classList.remove('sel'));el.classList.add('sel');document.getElementById('mName').textContent=name;document.getElementById('dd').classList.remove('open');}
+function pickM(name,el){document.querySelectorAll('.ddi').forEach(x=>x.classList.remove('sel'));el.classList.add('sel');document.getElementById('mName').textContent='GrubGPT — '+name;document.getElementById('dd').classList.remove('open');}
 
 // ── Textarea helpers
 function onInp(el,src){
@@ -455,7 +491,7 @@ function fill(t){
 
 // ── State
 let msgs=[],busy=false;
-const SYS='You are ChatGPT, a helpful AI assistant made by OpenAI. Be helpful and concise. Use markdown for code and formatting.';
+const SYS='You are GrubGPT, a warm, knowledgeable AI assistant with a passion for food, cooking, and good conversation. Be helpful, friendly, and concise. You can help with anything — not just food — but your personality is warm and inviting like a great restaurant host. Use markdown for code and formatting.';
 
 function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
@@ -495,7 +531,15 @@ function addMsg(role,content){
   } else {
     const id='ab'+Date.now()+Math.random();
     div.innerHTML=`
-      <div class="m-av gpt"><svg width="18" height="18" viewBox="0 0 41 41" fill="none"><path d="M37.532 16.87a9.963 9.963 0 00-.856-8.184 10.078 10.078 0 00-10.855-4.835 9.964 9.964 0 00-7.516-3.35 10.079 10.079 0 00-9.614 6.977 9.967 9.967 0 00-6.664 4.834 10.08 10.08 0 001.24 11.817 9.965 9.965 0 00.856 8.185 10.079 10.079 0 0010.855 4.835 9.965 9.965 0 007.516 3.35 10.078 10.078 0 009.617-6.981 9.967 9.967 0 006.663-4.834 10.079 10.079 0 00-1.243-11.813z" fill="black"/></svg></div>
+      <div class="m-av gpt"><svg width="16" height="16" viewBox="0 0 26 26" fill="none">
+  <line x1="7" y1="3" x2="7" y2="10" stroke="#e88c3a" stroke-width="1.8" stroke-linecap="round"/>
+  <line x1="5" y1="3" x2="5" y2="7" stroke="#e88c3a" stroke-width="1.8" stroke-linecap="round"/>
+  <line x1="9" y1="3" x2="9" y2="7" stroke="#e88c3a" stroke-width="1.8" stroke-linecap="round"/>
+  <path d="M5 7 Q7 9 9 7" stroke="#e88c3a" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+  <line x1="7" y1="10" x2="7" y2="22" stroke="#e88c3a" stroke-width="1.8" stroke-linecap="round"/>
+  <ellipse cx="19" cy="7" rx="3" ry="4" stroke="#c9aa7c" stroke-width="1.8" fill="none"/>
+  <line x1="19" y1="11" x2="19" y2="22" stroke="#c9aa7c" stroke-width="1.8" stroke-linecap="round"/>
+</svg></div>
       <div class="m-body">
         <div class="atext" id="${id}"></div>
         <div class="m-actions">
@@ -538,7 +582,7 @@ async function callAPI(){
   try{
     const res=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
-      headers:{'Content-Type':'application/json','anthropic-dangerous-direct-browser-access':'true'},
+      headers:{'Content-Type':'application/json','anthropic-dangerous-direct-browser-access':'true','x-api-key':getApiKey()},
       body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:SYS,messages:msgs,stream:true})
     });
     body.innerHTML='';
@@ -574,6 +618,61 @@ function newChat(){
   ti.classList.remove('chat-mode');
   ti.classList.add('splash-mode');
 }
+
+// ══ API KEY MANAGEMENT ══
+function getApiKey(){ return localStorage.getItem('cgpt_api_key')||''; }
+
+function checkApiKey(){
+  if(!getApiKey()){
+    document.getElementById('apiModal').classList.remove('hidden');
+    setTimeout(()=>document.getElementById('apiKeyInput').focus(),100);
+  }
+}
+
+function saveApiKey(){
+  const val = document.getElementById('apiKeyInput').value.trim();
+  if(!val.startsWith('sk-')){
+    document.getElementById('apiKeyError').classList.add('show');
+    return;
+  }
+  localStorage.setItem('cgpt_api_key', val);
+  document.getElementById('apiModal').classList.add('hidden');
+  document.getElementById('apiKeyError').classList.remove('show');
+}
+
+function skipModal(){
+  document.getElementById('apiModal').classList.add('hidden');
+}
+
+// Allow Enter key in input
+document.addEventListener('DOMContentLoaded',()=>{
+  checkApiKey();
+  document.getElementById('apiKeyInput').addEventListener('keydown',e=>{
+    if(e.key==='Enter') saveApiKey();
+  });
+  // Pre-fill if already saved
+  const saved = getApiKey();
+  if(saved) document.getElementById('apiKeyInput').value = saved;
+});
+
 </script>
+
+<!-- API KEY MODAL -->
+<div class="modal-overlay" id="apiModal">
+  <div class="modal-box">
+    <div class="modal-title">Welcome to GrubGPT 🍽️</div>
+    <div class="modal-desc">
+      To get started, enter your Anthropic API key. GrubGPT runs on Claude under the hood. It's stored only in your browser's localStorage and never sent anywhere except directly to Anthropic.<br><br>
+      Get a key at <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a>.
+    </div>
+    <input class="modal-input" id="apiKeyInput" type="password" placeholder="sk-ant-..." spellcheck="false" />
+    <div class="modal-error" id="apiKeyError">Invalid API key — please check and try again.</div>
+    <div class="modal-actions">
+      <button class="modal-btn secondary" onclick="skipModal()">Maybe later</button>
+      <button class="modal-btn primary" onclick="saveApiKey()">Save & continue</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
